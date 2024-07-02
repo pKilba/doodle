@@ -88,15 +88,47 @@
             unityInstance.SetFullscreen(1);
           };
 
-          // Добавление обработчика событий акселерометра
-          if (window.DeviceMotionEvent) {
-            window.addEventListener('devicemotion', function(event) {
-              var acceleration = event.accelerationIncludingGravity;
-              unityInstance.SendMessage('PlayerController', 'UpdateAcceleration', JSON.stringify(acceleration));
-            });
-          } else {
-            alert("DeviceMotionEvent is not supported");
+          console.log('Unity instance created successfully.');
+
+          // Добавляем код для работы с акселерометром
+          function requestMotionPermissions() {
+            console.log('Requesting motion permissions...');
+            if (typeof DeviceMotionEvent.requestPermission === 'function') {
+              DeviceMotionEvent.requestPermission()
+                .then(response => {
+                  console.log('Motion permission response:', response);
+                  if (response === 'granted') {
+                    console.log('Motion permissions granted.');
+                    window.addEventListener('devicemotion', handleMotionEvent);
+                  }
+                })
+                .catch(error => {
+                  console.error('Error requesting motion permissions:', error);
+                });
+            } else {
+              console.log('DeviceMotionEvent.requestPermission not available, adding event listener directly.');
+              window.addEventListener('devicemotion', handleMotionEvent);
+            }
           }
+
+          function handleMotionEvent(event) {
+            var acceleration = event.accelerationIncludingGravity;
+            if (acceleration) {
+              console.log('Acceleration event:', acceleration);
+              var accelerationData = JSON.stringify({
+                x: acceleration.x || 0,
+                y: acceleration.y || 0,
+                z: acceleration.z || 0
+              });
+              console.log('Sending acceleration data to Unity:', accelerationData);
+              unityInstance.SendMessage('PlayerController', 'SetAcceleration', accelerationData);
+            }
+          }
+
+          document.addEventListener('DOMContentLoaded', (event) => {
+            console.log('DOM fully loaded and parsed, requesting motion permissions.');
+            requestMotionPermissions();
+          });
 
         }).catch((message) => {
           alert(message);
