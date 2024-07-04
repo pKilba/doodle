@@ -115,13 +115,17 @@
                         DeviceMotionEvent.requestPermission()
                             .then(permissionState => {
                                 if (permissionState === 'granted') {
+                                    logMessage('Motion permission granted.');
                                     window.addEventListener('deviceorientation', handleOrientationEvent);
                                 } else {
                                     logMessage('Permission to access device orientation was denied.');
                                 }
                             })
-                            .catch(console.error);
+                            .catch(err => {
+                                logMessage('Error requesting motion permission: ' + err);
+                            });
                     } else {
+                        logMessage('DeviceMotionEvent.requestPermission is not a function.');
                         window.addEventListener('deviceorientation', handleOrientationEvent);
                     }
                 }
