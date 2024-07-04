@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en-us">
 <head>
     <meta charset="utf-8">
@@ -6,32 +6,6 @@
     <title>Unity WebGL Player | DoodleJump</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-    <style>
-        #log {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            height: 150px;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            overflow-y: auto;
-            font-size: 12px;
-            padding: 5px;
-            box-sizing: border-box;
-        }
-        #request-permission-button {
-            position: fixed;
-            bottom: 160px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
 </head>
 <body>
     <div id="unity-container" class="unity-desktop">
@@ -49,8 +23,6 @@
             <div id="unity-build-title">DoodleJump</div>
         </div>
     </div>
-    <button id="request-permission-button">Enable Motion Access</button>
-    <div id="log"></div>
     <script>
         var container = document.querySelector("#unity-container");
         var canvas = document.querySelector("#unity-canvas");
@@ -58,8 +30,6 @@
         var progressBarFull = document.querySelector("#unity-progress-bar-full");
         var fullscreenButton = document.querySelector("#unity-fullscreen-button");
         var warningBanner = document.querySelector("#unity-warning");
-        var logDiv = document.getElementById("log");
-        var requestPermissionButton = document.getElementById("request-permission-button");
 
         function unityShowBanner(msg, type) {
             function updateBannerVisibility() {
@@ -77,13 +47,6 @@
                 }, 5000);
             }
             updateBannerVisibility();
-        }
-
-        function logMessage(message) {
-            var logEntry = document.createElement("div");
-            logEntry.textContent = message;
-            logDiv.appendChild(logEntry);
-            logDiv.scrollTop = logDiv.scrollHeight;
         }
 
         var buildUrl = "Build";
@@ -124,50 +87,11 @@
                     unityInstance.SetFullscreen(1);
                 };
 
-                requestPermissionButton.onclick = () => {
-                    requestMotionPermission();
-                };
-
-                function requestMotionPermission() {
-                    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-                        logMessage('Requesting iOS motion permission...');
-                        DeviceMotionEvent.requestPermission()
-                            .then(permissionState => {
-                                if (permissionState === 'granted') {
-                                    logMessage('Motion permission granted.');
-                                    window.addEventListener('deviceorientation', handleOrientationEvent);
-                                    requestPermissionButton.style.display = 'none';
-                                } else {
-                                    logMessage('Permission to access device orientation was denied.');
-                                    alert('Permission to access device orientation was denied.');
-                                }
-                            })
-                            .catch(err => {
-                                logMessage('Error requesting motion permission: ' + err);
-                                alert('Error requesting motion permission: ' + err);
-                            });
-                    } else {
-                        logMessage('DeviceMotionEvent.requestPermission is not a function, directly adding event listener.');
-                        window.addEventListener('deviceorientation', handleOrientationEvent);
-                        requestPermissionButton.style.display = 'none';
-                    }
-                }
-
-                function handleOrientationEvent(event) {
+                window.addEventListener("deviceorientation", function(event) {
                     var data = { x: event.gamma || 0, y: event.beta || 0 };
-                    logMessage("Sending accelerometer data: " + JSON.stringify(data));
-
-                    if (unityInstance && typeof unityInstance.SendMessage === "function") {
-                        try {
-                            unityInstance.SendMessage('Doodler', 'HandleAccelerometerInput', JSON.stringify(data));
-                            logMessage("Message sent to Unity.");
-                        } catch (err) {
-                            logMessage("Error sending message to Unity: " + err);
-                        }
-                    } else {
-                        logMessage("Unity instance or SendMessage function not found.");
-                    }
-                }
+                    console.log("Sending accelerometer data: " + JSON.stringify(data));
+                    unityInstance.SendMessage('PlayerController', 'HandleAccelerometerInput', JSON.stringify(data));
+                });
 
             }).catch((message) => {
                 alert(message);
