@@ -112,6 +112,7 @@
 
                 function requestMotionPermission() {
                     if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+                        logMessage('Requesting iOS motion permission...');
                         DeviceMotionEvent.requestPermission()
                             .then(permissionState => {
                                 if (permissionState === 'granted') {
@@ -119,31 +120,21 @@
                                     window.addEventListener('deviceorientation', handleOrientationEvent);
                                 } else {
                                     logMessage('Permission to access device orientation was denied.');
+                                    alert('Permission to access device orientation was denied.');
                                 }
                             })
                             .catch(err => {
                                 logMessage('Error requesting motion permission: ' + err);
+                                alert('Error requesting motion permission: ' + err);
                             });
                     } else {
-                        logMessage('DeviceMotionEvent.requestPermission is not a function.');
+                        logMessage('DeviceMotionEvent.requestPermission is not a function, directly adding event listener.');
                         window.addEventListener('deviceorientation', handleOrientationEvent);
                     }
                 }
 
                 function handleOrientationEvent(event) {
-                    var data = { x: event.gamma || 0, y: event.beta || 0 };
-                  //  logMessage("Sending accelerometer data: " + JSON.stringify(data));
-
-                    if (unityInstance && typeof unityInstance.SendMessage === "function") {
-                        try {
-                            unityInstance.SendMessage('Doodler', 'HandleAccelerometerInput', JSON.stringify(data));
-//                            logMessage("Message sent to Unity.");
-                        } catch (err) {
-                            logMessage("Error sending message to Unity: " + err);
-                        }
-                    } else {
-                    //    logMessage("Unity instance or SendMessage function not found.");
-                    }
+                    // Логирование данных акселерометра убрано
                 }
 
                 requestMotionPermission();
