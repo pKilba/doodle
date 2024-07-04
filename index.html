@@ -49,7 +49,7 @@
             <div id="unity-build-title">DoodleJump</div>
         </div>
     </div>
-    <button id="request-permission-button" style="display:none;">Enable Motion Access</button>
+    <button id="request-permission-button">Enable Motion Access</button>
     <div id="log"></div>
     <script>
         var container = document.querySelector("#unity-container");
@@ -99,54 +99,16 @@
             showBanner: unityShowBanner,
         };
 
-        function handleOrientationEvent(event) {
-            var data = { x: event.gamma || 0, y: event.beta || 0 };
-            logMessage("Sending accelerometer data: " + JSON.stringify(data));
-
-            if (unityInstance && typeof unityInstance.SendMessage === "function") {
-                try {
-                    unityInstance.SendMessage('Doodler', 'HandleAccelerometerInput', JSON.stringify(data));
-                    logMessage("Message sent to Unity.");
-                } catch (err) {
-                    logMessage("Error sending message to Unity: " + err);
-                }
-            } else {
-                logMessage("Unity instance or SendMessage function not found.");
-            }
-        }
-
-        function requestMotionPermission() {
-            if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-                logMessage('Requesting iOS motion permission...');
-                DeviceMotionEvent.requestPermission()
-                    .then(permissionState => {
-                        if (permissionState === 'granted') {
-                            logMessage('Motion permission granted.');
-                            window.addEventListener('deviceorientation', handleOrientationEvent);
-                            requestPermissionButton.style.display = 'none';
-                        } else {
-                            logMessage('Permission to access device orientation was denied.');
-                            alert('Permission to access device orientation was denied.');
-                        }
-                    })
-                    .catch(err => {
-                        logMessage('Error requesting motion permission: ' + err);
-                        alert('Error requesting motion permission: ' + err);
-                    });
-            } else {
-                logMessage('DeviceMotionEvent.requestPermission is not a function, directly adding event listener.');
-                window.addEventListener('deviceorientation', handleOrientationEvent);
-                requestPermissionButton.style.display = 'none';
-            }
-        }
-
-        if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-            requestPermissionButton.style.display = 'block';
-            requestPermissionButton.onclick = () => {
-                requestMotionPermission();
-            };
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+            var meta = document.createElement('meta');
+            meta.name = 'viewport';
+            meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+            document.getElementsByTagName('head')[0].appendChild(meta);
+            container.className = "unity-mobile";
+            canvas.className = "unity-mobile";
         } else {
-            window.addEventListener('deviceorientation', handleOrientationEvent);
+            canvas.style.width = "960px";
+            canvas.style.height = "600px";
         }
 
         loadingBar.style.display = "block";
@@ -161,6 +123,52 @@
                 fullscreenButton.onclick = () => {
                     unityInstance.SetFullscreen(1);
                 };
+
+                requestPermissionButton.onclick = () => {
+                    requestMotionPermission();
+                };
+
+                function requestMotionPermission() {
+                    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+                        logMessage('Requesting iOS motion permission...');
+                        DeviceMotionEvent.requestPermission()
+                            .then(permissionState => {
+                                if (permissionState === 'granted') {
+                                    logMessage('Motion permission granted.');
+                                    window.addEventListener('deviceorientation', handleOrientationEvent);
+                                    requestPermissionButton.style.display = 'none';
+                                } else {
+                                    logMessage('Permission to access device orientation was denied.');
+                                    alert('Permission to access device orientation was denied.');
+                                }
+                            })
+                            .catch(err => {
+                                logMessage('Error requesting motion permission: ' + err);
+                                alert('Error requesting motion permission: ' + err);
+                            });
+                    } else {
+                        logMessage('DeviceMotionEvent.requestPermission is not a function, directly adding event listener.');
+                        window.addEventListener('deviceorientation', handleOrientationEvent);
+                        requestPermissionButton.style.display = 'none';
+                    }
+                }
+
+                function handleOrientationEvent(event) {
+                    var data = { x: event.gamma || 0, y: event.beta || 0 };
+                    logMessage("Sending accelerometer data: " + JSON.stringify(data));
+
+                    if (unityInstance && typeof unityInstance.SendMessage === "function") {
+                        try {
+                            unityInstance.SendMessage('Doodler', 'HandleAccelerometerInput', JSON.stringify(data));
+                            logMessage("Message sent to Unity.");
+                        } catch (err) {
+                            logMessage("Error sending message to Unity: " + err);
+                        }
+                    } else {
+                        logMessage("Unity instance or SendMessage function not found.");
+                    }
+                }
+
             }).catch((message) => {
                 alert(message);
             });
