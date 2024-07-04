@@ -19,6 +19,18 @@
             padding: 5px;
             box-sizing: border-box;
         }
+        #request-permission-button {
+            position: fixed;
+            bottom: 160px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -37,6 +49,7 @@
             <div id="unity-build-title">DoodleJump</div>
         </div>
     </div>
+    <button id="request-permission-button">Enable Motion Access</button>
     <div id="log"></div>
     <script>
         var container = document.querySelector("#unity-container");
@@ -46,6 +59,7 @@
         var fullscreenButton = document.querySelector("#unity-fullscreen-button");
         var warningBanner = document.querySelector("#unity-warning");
         var logDiv = document.getElementById("log");
+        var requestPermissionButton = document.getElementById("request-permission-button");
 
         function unityShowBanner(msg, type) {
             function updateBannerVisibility() {
@@ -110,6 +124,10 @@
                     unityInstance.SetFullscreen(1);
                 };
 
+                requestPermissionButton.onclick = () => {
+                    requestMotionPermission();
+                };
+
                 function requestMotionPermission() {
                     if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
                         logMessage('Requesting iOS motion permission...');
@@ -118,6 +136,7 @@
                                 if (permissionState === 'granted') {
                                     logMessage('Motion permission granted.');
                                     window.addEventListener('deviceorientation', handleOrientationEvent);
+                                    requestPermissionButton.style.display = 'none';
                                 } else {
                                     logMessage('Permission to access device orientation was denied.');
                                     alert('Permission to access device orientation was denied.');
@@ -130,14 +149,13 @@
                     } else {
                         logMessage('DeviceMotionEvent.requestPermission is not a function, directly adding event listener.');
                         window.addEventListener('deviceorientation', handleOrientationEvent);
+                        requestPermissionButton.style.display = 'none';
                     }
                 }
 
                 function handleOrientationEvent(event) {
                     // Логирование данных акселерометра убрано
                 }
-
-                requestMotionPermission();
 
             }).catch((message) => {
                 alert(message);
