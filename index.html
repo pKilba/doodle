@@ -154,7 +154,19 @@
                 }
 
                 function handleOrientationEvent(event) {
-                    // Логирование данных акселерометра убрано
+                    var data = { x: event.gamma || 0, y: event.beta || 0 };
+                    logMessage("Sending accelerometer data: " + JSON.stringify(data));
+
+                    if (unityInstance && typeof unityInstance.SendMessage === "function") {
+                        try {
+                            unityInstance.SendMessage('Doodler', 'HandleAccelerometerInput', JSON.stringify(data));
+                            logMessage("Message sent to Unity.");
+                        } catch (err) {
+                            logMessage("Error sending message to Unity: " + err);
+                        }
+                    } else {
+                        logMessage("Unity instance or SendMessage function not found.");
+                    }
                 }
 
             }).catch((message) => {
