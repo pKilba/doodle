@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="en-us">
 <head>
     <meta charset="utf-8">
@@ -31,18 +31,32 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        .unity-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .unity-canvas {
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
 <body>
-    <div id="unity-container" class="unity-desktop">
-        <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
+    <div id="unity-container" class="unity-container">
+        <canvas id="unity-canvas" class="unity-canvas" tabindex="0"></canvas>
         <div id="unity-loading-bar">
             <div id="unity-logo"></div>
             <div id="unity-progress-bar-empty">
                 <div id="unity-progress-bar-full"></div>
             </div>
         </div>
-        <div id="unity-warning"> </div>
+        <div id="unity-warning"></div>
         <div id="unity-footer">
             <div id="unity-webgl-logo"></div>
             <div id="unity-fullscreen-button"></div>
@@ -107,8 +121,8 @@
             container.className = "unity-mobile";
             canvas.className = "unity-mobile";
         } else {
-            canvas.style.width = "960px";
-            canvas.style.height = "600px";
+            container.className = "unity-container";
+            canvas.className = "unity-canvas";
         }
 
         loadingBar.style.display = "block";
