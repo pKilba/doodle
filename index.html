@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en-us">
 <head>
     <meta charset="utf-8">
@@ -93,129 +92,95 @@
             logDiv.scrollTop = logDiv.scrollHeight;
         }
 
-        function checkUserAndLoadUnity() {
-            // Замените URL на URL вашего сервера
-            var apiUrl = 'https://telegramgame-production-250b.up.railway.app/api/check-user';
-            var telegramId = 'user_1'; // Здесь вы должны получить идентификатор пользователя из Telegram
+        var buildUrl = "Build";
+        var loaderUrl = buildUrl + "/Build.loader.js";
+        var config = {
+            dataUrl: buildUrl + "/Build.data",
+            frameworkUrl: buildUrl + "/Build.framework.js",
+            codeUrl: buildUrl + "/Build.wasm",
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "DefaultCompany",
+            productName: "DoodleJump",
+            productVersion: "1.0",
+            showBanner: unityShowBanner,
+        };
 
-            fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ telegramId: telegramId })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.isNewUser) {
-                    logMessage('New user detected. Creating user in database.');
-                } else {
-                    logMessage('Existing user detected.');
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+            var meta = document.createElement('meta');
+            meta.name = 'viewport';
+            meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+            document.getElementsByTagName('head')[0].appendChild(meta);
+            container.className = "unity-mobile";
+            canvas.className = "unity-mobile";
+        } else {
+            canvas.style.width = "960px";
+            canvas.style.height = "600px";
+        }
+
+        loadingBar.style.display = "block";
+
+        var script = document.createElement("script");
+        script.src = loaderUrl;
+        script.onload = () => {
+            createUnityInstance(canvas, config, (progress) => {
+                progressBarFull.style.width = 100 * progress + "%";
+            }).then((unityInstance) => {
+                loadingBar.style.display = "none";
+                fullscreenButton.onclick = () => {
+                    unityInstance.SetFullscreen(1);
+                };
+
+                requestPermissionButton.onclick = () => {
+                    requestMotionPermission();
+                };
+
+                function requestMotionPermission() {
+                    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+                        logMessage('Requesting iOS motion permission...');
+                        DeviceMotionEvent.requestPermission()
+                            .then(permissionState => {
+                                if (permissionState === 'granted') {
+                                    logMessage('Motion permission granted.');
+                                    window.addEventListener('deviceorientation', handleOrientationEvent);
+                                    requestPermissionButton.style.display = 'none';
+                                } else {
+                                    logMessage('Permission to access device orientation was denied.');
+                                    alert('Permission to access device orientation was denied.');
+                                }
+                            })
+                            .catch(err => {
+                                logMessage('Error requesting motion permission: ' + err);
+                                alert('Error requesting motion permission: ' + err);
+                            });
+                    } else {
+                        logMessage('DeviceMotionEvent.requestPermission is not a function, directly adding event listener.');
+                        window.addEventListener('deviceorientation', handleOrientationEvent);
+                        requestPermissionButton.style.display = 'none';
+                    }
                 }
 
-                // Загружаем Unity после проверки пользователя
-                loadUnity();
-            })
-            .catch(error => {
-                logMessage('Error checking user: ' + error);
-                loadUnity(); // Все равно загружаем Unity в случае ошибки
+                function handleOrientationEvent(event) {
+                    var data = { x: event.gamma || 0, y: event.beta || 0 };
+                    logMessage("Sending accelerometer data: " + JSON.stringify(data));
+
+                    if (unityInstance && typeof unityInstance.SendMessage === "function") {
+                        try {
+                            unityInstance.SendMessage('Doodler', 'HandleAccelerometerInput', JSON.stringify(data));
+                            logMessage("Message sent to Unity.");
+                        } catch (err) {
+                            logMessage("Error sending message to Unity: " + err);
+                        }
+                    } else {
+                        logMessage("Unity instance or SendMessage function not found.");
+                    }
+                }
+
+            }).catch((message) => {
+                alert(message);
             });
-        }
+        };
 
-        function loadUnity() {
-            var buildUrl = "Build";
-            var loaderUrl = buildUrl + "/Build.loader.js";
-            var config = {
-                dataUrl: buildUrl + "/Build.data",
-                frameworkUrl: buildUrl + "/Build.framework.js",
-                codeUrl: buildUrl + "/Build.wasm",
-                streamingAssetsUrl: "StreamingAssets",
-                companyName: "DefaultCompany",
-                productName: "DoodleJump",
-                productVersion: "1.0",
-                showBanner: unityShowBanner,
-            };
-
-            if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-                var meta = document.createElement('meta');
-                meta.name = 'viewport';
-                meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-                document.getElementsByTagName('head')[0].appendChild(meta);
-                container.className = "unity-mobile";
-                canvas.className = "unity-mobile";
-            } else {
-                canvas.style.width = "960px";
-                canvas.style.height = "600px";
-            }
-
-            loadingBar.style.display = "block";
-
-            var script = document.createElement("script");
-            script.src = loaderUrl;
-            script.onload = () => {
-                createUnityInstance(canvas, config, (progress) => {
-                    progressBarFull.style.width = 100 * progress + "%";
-                }).then((unityInstance) => {
-                    loadingBar.style.display = "none";
-                    fullscreenButton.onclick = () => {
-                        unityInstance.SetFullscreen(1);
-                    };
-
-                    requestPermissionButton.onclick = () => {
-                        requestMotionPermission();
-                    };
-
-                    function requestMotionPermission() {
-                        if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-                            logMessage('Requesting iOS motion permission...');
-                            DeviceMotionEvent.requestPermission()
-                                .then(permissionState => {
-                                    if (permissionState === 'granted') {
-                                        logMessage('Motion permission granted.');
-                                        window.addEventListener('deviceorientation', handleOrientationEvent);
-                                        requestPermissionButton.style.display = 'none';
-                                    } else {
-                                        logMessage('Permission to access device orientation was denied.');
-                                        alert('Permission to access device orientation was denied.');
-                                    }
-                                })
-                                .catch(err => {
-                                    logMessage('Error requesting motion permission: ' + err);
-                                    alert('Error requesting motion permission: ' + err);
-                                });
-                        } else {
-                            logMessage('DeviceMotionEvent.requestPermission is not a function, directly adding event listener.');
-                            window.addEventListener('deviceorientation', handleOrientationEvent);
-                            requestPermissionButton.style.display = 'none';
-                        }
-                    }
-
-                    function handleOrientationEvent(event) {
-                        var data = { x: event.gamma || 0, y: event.beta || 0 };
-                        logMessage("Sending accelerometer data: " + JSON.stringify(data));
-
-                        if (unityInstance && typeof unityInstance.SendMessage === "function") {
-                            try {
-                                unityInstance.SendMessage('Doodler', 'HandleAccelerometerInput', JSON.stringify(data));
-                                logMessage("Message sent to Unity.");
-                            } catch (err) {
-                                logMessage("Error sending message to Unity: " + err);
-                            }
-                        } else {
-                            logMessage("Unity instance or SendMessage function not found.");
-                        }
-                    }
-
-                }).catch((message) => {
-                    alert(message);
-                });
-            };
-
-            document.body.appendChild(script);
-        }
-
-        // Запускаем проверку пользователя при загрузке страницы
-        window.onload = checkUserAndLoadUnity;
+        document.body.appendChild(script);
     </script>
 </body>
 </html>
