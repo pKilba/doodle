@@ -204,6 +204,16 @@
                     }
                 }
 
+                // Отправка ID пользователя и имени пользователя в Unity
+                if (unityInstance && typeof unityInstance.SendMessage === "function") {
+                    try {
+                        unityInstance.SendMessage('Doodler', 'SetUserData', JSON.stringify(userData));
+                        logMessage("User data sent to Unity.");
+                    } catch (err) {
+                        logMessage("Error sending user data to Unity: " + err);
+                    }
+                }
+
             }).catch((message) => {
                 alert(message);
             });
