@@ -37,6 +37,16 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        #user-info {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -57,6 +67,7 @@
     </div>
     <button id="request-permission-button">Enable Motion Access</button>
     <div id="log"></div>
+    <div id="user-info"></div>
     <script>
         var container = document.querySelector("#unity-container");
         var canvas = document.querySelector("#unity-canvas");
@@ -66,6 +77,7 @@
         var warningBanner = document.querySelector("#unity-warning");
         var logDiv = document.getElementById("log");
         var requestPermissionButton = document.getElementById("request-permission-button");
+        var userInfoDiv = document.getElementById("user-info");
 
         function unityShowBanner(msg, type) {
             function updateBannerVisibility() {
@@ -91,6 +103,23 @@
             logDiv.appendChild(logEntry);
             logDiv.scrollTop = logDiv.scrollHeight;
         }
+
+        function getQueryParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return {
+                userId: urlParams.get('userId'),
+                username: urlParams.get('username')
+            };
+        }
+
+        // Захват данных пользователя из параметров URL
+        const userData = getQueryParams();
+
+        // Логирование данных пользователя (для отладки)
+        console.log(`User ID: ${userData.userId}, Username: ${userData.username}`);
+
+        // Вывод данных пользователя на экран
+        userInfoDiv.textContent = `User ID: ${userData.userId}, Username: ${userData.username}`;
 
         var buildUrl = "Build";
         var loaderUrl = buildUrl + "/Build.loader.js";
