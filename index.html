@@ -205,15 +205,17 @@
                     }
                 }
 
-                // Отправка ID пользователя и имени пользователя в Unity
-                if (unityInstance && typeof unityInstance.SendMessage === "function") {
-                    try {
-                        unityInstance.SendMessage('Doodler', 'ReceiveUserData', JSON.stringify(userData));
-                        logMessage("User data sent to Unity.");
-                    } catch (err) {
-                        logMessage("Error sending user data to Unity: " + err);
+                // Отправка ID пользователя и имени пользователя в Unity с задержкой
+                setTimeout(() => {
+                    if (unityInstance && typeof unityInstance.SendMessage === "function") {
+                        try {
+                            unityInstance.SendMessage('Doodler', 'ReceiveUserData', JSON.stringify(userData));
+                            logMessage("User data sent to Unity.");
+                        } catch (err) {
+                            logMessage("Error sending user data to Unity: " + err);
+                        }
                     }
-                }
+                }, 5000); // Задержка 5 секунд для уверенности, что объект существует
 
             }).catch((message) => {
                 alert(message);
