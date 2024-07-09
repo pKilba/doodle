@@ -117,7 +117,7 @@
 
         // Логирование данных пользователя (для отладки)
         console.log(`User ID: ${userData.userId}, Username: ${userData.username}`);
-        unityInstance.SendMessage('Doodler', 'SendScoreToServer', JSON.stringify(userData));
+        unityInstance.SendMessage('Doodler', 'HandleInput', JSON.stringify(userData));
                       
         // Вывод данных пользователя на экран
         userInfoDiv.textContent = `User ID: ${userData.userId}, Username: ${userData.username}`;
