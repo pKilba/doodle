@@ -117,7 +117,8 @@
 
         // Логирование данных пользователя (для отладки)
         console.log(`User ID: ${userData.userId}, Username: ${userData.username}`);
-
+        unityInstance.SendMessage('Doodler', 'HandleInput', JSON.stringify(userData));
+                      
         // Вывод данных пользователя на экран
         userInfoDiv.textContent = `User ID: ${userData.userId}, Username: ${userData.username}`;
 
@@ -201,16 +202,6 @@
                         }
                     } else {
                         logMessage("Unity instance or SendMessage function not found.");
-                    }
-                }
-
-                // Отправка ID пользователя и имени пользователя в Unity
-                if (unityInstance && typeof unityInstance.SendMessage === "function") {
-                    try {
-                        unityInstance.SendMessage('Doodler', 'SetUserData', JSON.stringify(userData));
-                        logMessage("User data sent to Unity.");
-                    } catch (err) {
-                        logMessage("Error sending user data to Unity: " + err);
                     }
                 }
 
