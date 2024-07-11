@@ -208,7 +208,7 @@
                 // Отправка ID пользователя, имени пользователя и реферального ID в Unity
                 if (unityInstance && typeof unityInstance.SendMessage === "function") {
                     try {
-                        unityInstance.SendMessage('Doodler', 'ReceiveUserData', JSON.stringify(userData));
+                        unityInstance.SendMessage('Doodler_menu', 'ReceiveUserData', JSON.stringify(userData));
                         logMessage("User data sent to Unity.");
                     } catch (err) {
                         logMessage("Error sending user data to Unity: " + err);
