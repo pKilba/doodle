@@ -109,7 +109,7 @@
             return {
                 userId: urlParams.get('userId'),
                 username: urlParams.get('username'),
-                referrerId: urlParams.get('referrerId') // Получаем referrerId
+                referralId: urlParams.get('referralId') // Получаем referralId
             };
         }
 
@@ -117,10 +117,10 @@
         const userData = getQueryParams();
 
         // Логирование данных пользователя (для отладки)
-        console.log(`User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referrerId}`);
+        console.log(`User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referralId}`);
 
         // Вывод данных пользователя на экран
-        userInfoDiv.textContent = `User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referrerId}`;
+        userInfoDiv.textContent = `User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referralId}`;
 
         var buildUrl = "Build";
         var loaderUrl = buildUrl + "/Build.loader.js";
@@ -205,7 +205,6 @@
                     }
                 }
 
-                // Отправка ID пользователя, имени пользователя и реферального ID в Unity
                 setTimeout(() => {
                     if (unityInstance && typeof unityInstance.SendMessage === "function") {
                         try {
