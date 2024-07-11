@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en-us">
 <head>
     <meta charset="utf-8">
@@ -109,7 +108,8 @@
             const urlParams = new URLSearchParams(window.location.search);
             return {
                 userId: urlParams.get('userId'),
-                username: urlParams.get('username')
+                username: urlParams.get('username'),
+                referrerId: urlParams.get('referrerId') // Получаем referrerId
             };
         }
 
@@ -117,10 +117,10 @@
         const userData = getQueryParams();
 
         // Логирование данных пользователя (для отладки)
-        console.log(`User ID: ${userData.userId}, Username: ${userData.username}`);
+        console.log(`User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referrerId}`);
 
         // Вывод данных пользователя на экран
-        userInfoDiv.textContent = `User ID: ${userData.userId}, Username: ${userData.username}`;
+        userInfoDiv.textContent = `User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referrerId}`;
 
         var buildUrl = "Build";
         var loaderUrl = buildUrl + "/Build.loader.js";
@@ -205,17 +205,15 @@
                     }
                 }
 
-                // Отправка ID пользователя и имени пользователя в Unity с задержкой
-                setTimeout(() => {
-                    if (unityInstance && typeof unityInstance.SendMessage === "function") {
-                        try {
-                            unityInstance.SendMessage('Doodler_menu', 'ReceiveUserData', JSON.stringify(userData));
-                            logMessage("User data sent to Unity.");
-                        } catch (err) {
-                            logMessage("Error sending user data to Unity: " + err);
-                        }
+                // Отправка ID пользователя, имени пользователя и реферального ID в Unity
+                if (unityInstance && typeof unityInstance.SendMessage === "function") {
+                    try {
+                        unityInstance.SendMessage('Doodler', 'ReceiveUserData', JSON.stringify(userData));
+                        logMessage("User data sent to Unity.");
+                    } catch (err) {
+                        logMessage("Error sending user data to Unity: " + err);
                     }
-                }, 2000); // Задержка 2 секунд для уверенности, что объект существует
+                }
 
             }).catch((message) => {
                 alert(message);
