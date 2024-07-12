@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect TON Wallet</title>
+    <script src="https://unpkg.com/@ton-connect/sdk"></script>
+    <script>
+        async function connectWallet() {
+            const tonConnect = new TonConnect({ manifestUrl: 'https://pkilba.github.io/manifest.json' });
+            try {
+                const connection = await tonConnect.connect();
+                document.getElementById("wallet-address").innerText = `Wallet connected: ${connection.address}`;
+            } catch (error) {
+                document.getElementById("wallet-address").innerText = `Error connecting wallet: ${error.message}`;
+            }
+        }
+        window.onload = () => {
+            document.getElementById("connect-button").onclick = connectWallet;
+        };
+    </script>
+</head>
+<body>
+    <h1>Connect TON Wallet</h1>
+    <button id="connect-button">Connect Wallet</button>
+    <p id="wallet-address"></p>
+</body>
+</html>
