@@ -4,32 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connect TON Wallet</title>
-    <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.min.js"></script>
-    <script>
-        async function connectWallet() {
-            // Проверка наличия TonConnect
-            if (typeof TonConnect === 'undefined') {
-                console.error('TonConnect is not defined');
-                document.getElementById("wallet-address").innerText = 'Error: TonConnect is not defined';
-                return;
-            }
-
-            const tonConnect = new TonConnect({ manifestUrl: 'https://pkilba.github.io/manifest.json' });
-            try {
-                const connection = await tonConnect.connect();
-                document.getElementById("wallet-address").innerText = `Wallet connected: ${connection.address}`;
-            } catch (error) {
-                document.getElementById("wallet-address").innerText = `Error connecting wallet: ${error.message}`;
-            }
-        }
-        window.onload = () => {
-            document.getElementById("connect-button").onclick = connectWallet;
-        };
-    </script>
+    <!-- Подключите TON Connect UI библиотеку -->
+    <script src="https://unpkg.com/@tonconnect/ui@0.0.9/dist/tonconnect-ui.min.js"></script>
 </head>
 <body>
-    <h1>Connect TON Wallet</h1>
-    <button id="connect-button">Connect Wallet</button>
-    <p id="wallet-address"></p>
+    <h1>Hello TON Blockchain!</h1>
+    <div id="connect"></div>
+    <script>
+        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+            manifestUrl: 'https://pkilba.github.io/doodle/manifest.json',
+            buttonRootId: 'connect'
+        });
+    </script>
 </body>
 </html>
