@@ -4,12 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connect TON Wallet</title>
-    <!-- Подключите TON Connect UI библиотеку -->
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        #connect-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 200px;
+            transform: translate(-50%, -50%);
+            border: none;
+            background-color: white;
+            text-align: center;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
-    <h1>Hello TON Blockchain!</h1>
-    <div id="connect"></div>
+    <div id="connect-container">
+        <h1>Hello TON Blockchain!</h1>
+        <div id="connect"></div>
+    </div>
     <script>
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://pkilba.github.io/doodle/manifest.json',
