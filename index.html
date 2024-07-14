@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity WebGL Player | DoodleJump</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
@@ -89,6 +89,7 @@
     </div>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <script>
+        console.log("Starting script execution");
         var container = document.querySelector("#unity-container");
         var canvas = document.querySelector("#unity-canvas");
         var loadingBar = document.querySelector("#unity-loading-bar");
@@ -118,6 +119,7 @@
         }
 
         function logMessage(message) {
+            console.log("Log message: " + message);
             var logEntry = document.createElement("div");
             logEntry.textContent = message;
             logDiv.appendChild(logEntry);
@@ -138,6 +140,7 @@
 
         // Логирование данных пользователя (для отладки)
         console.log(`User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referralId}`);
+        logMessage(`User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referralId}`);
 
         // Вывод данных пользователя на экран
         userInfoDiv.textContent = `User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referralId}`;
@@ -244,12 +247,14 @@
         document.body.appendChild(script);
     </script>
     <!-- Подключаем JavaScript файл -->
-    <script src="WebGLFunctions.js"></script>
+    <script src="StreamingAssets/WebGLFunctions.js"></script>
     <script>
+        console.log("Initializing TON Connect UI");
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://pkilba.github.io/doodle/manifest.json',
             buttonRootId: 'connect'
         });
+        console.log("TON Connect UI initialized");
     </script>
 </body>
 </html>
