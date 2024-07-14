@@ -1,0 +1,7 @@
+{
+    "name": "My Doodle Jump dApp",
+    "description": "A simple dApp for connecting to TON Wallet",
+    "url": "https://github.com/pKilba/doodle/blob/main/tonconnect-manifest.json",
+    "iconUrl":"src": "https://pkilba.github.io/doodle/icon.png"
+        
+}
