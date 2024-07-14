@@ -1,4 +1,5 @@
-<html lang="en-us">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -47,6 +48,19 @@
             border-radius: 5px;
             font-size: 14px;
         }
+        /* Добавляем контейнер для кошелька */
+        #connect-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 200px;
+            background-color: white;
+            text-align: center;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body>
@@ -68,6 +82,11 @@
     <button id="request-permission-button">Enable Motion Access</button>
     <div id="log"></div>
     <div id="user-info"></div>
+    <!-- Контейнер для кошелька -->
+    <div id="connect-container">
+        <h1>Hello TON Blockchain!</h1>
+        <div id="connect"></div>
+    </div>
     <script>
         var container = document.querySelector("#unity-container");
         var canvas = document.querySelector("#unity-canvas");
@@ -221,7 +240,9 @@
             });
         };
         
-
+        <!-- Подключаем JavaScript файл -->
+        <script src="StreamingAssets/WebGLFunctions.js"></script>
+        
         document.body.appendChild(script);
     </script>
 </body>
