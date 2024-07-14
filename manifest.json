@@ -1,12 +1,13 @@
 {
-    "name": "DoodleJump",
-    "description": "Игра DoodleJump с интеграцией TON кошелька",
-    "url": "https://pkilba.github.io/doodle",
+    "name": "My Doodle Jump dApp",
+    "description": "A simple dApp for connecting to TON Wallet",
+    "url": "https://pkilba.github.io/doodle/",
     "icons": [
         {
             "src": "https://pkilba.github.io/doodle/icon.png",
             "sizes": "192x192",
             "type": "image/png"
         }
-    ]
+    ],
+    "permissions": ["ton"]
 }
