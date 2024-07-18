@@ -251,21 +251,20 @@
 
         async function transaction() {
             const transaction = {
-                valid_until: Math.round(Date.now() / 1000) + 10,
+                valid_until: Math.round(Date.now() / 1000) + 60, // Увеличено время валидности транзакции
                 messages: [
-                {
-      address: "EQB6wlOzNHSKOoWCE2AgfE6oVViQwsDJZKW4Cm7-0rDizdUY",
-      amount: "100000000"
-           }
-             ]
+                    {
+                        address: "EQ6Wi0zNHSKoWcCEA2gfE6oVYwiosDJZXK4Cm7-0rDzidUV",
+                        amount: "100000000"
+                    }
+                ]
             };
             try {
-                logMessage("transaction !!");
-            console.log(JSON.stringify(transaction, null, 2));
+                logMessage("Transaction object: " + JSON.stringify(transaction));
                 await tonConnectUI.sendTransaction(transaction);
                 logMessage("Transaction sent successfully.");
             } catch (e) {
-                console.error(e);
+                console.error("Error sending transaction:", e);
                 logMessage("Error sending transaction: " + e);
             }
         }
