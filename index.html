@@ -86,7 +86,7 @@
         <div id="connect"></div>
         <button onclick="transaction()">Send TON</button>
     </div>
-    <script src="https://unpkg.com/@tonconnect/ui@0.0.9/dist/tonconnect-ui.min.js"></script>
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <script>
         console.log("Starting script execution");
         var container = document.querySelector("#unity-container");
@@ -251,7 +251,7 @@
 
         async function transaction() {
             const transaction = {
-                valid_until: Math.round(Date.now() / 1000) + 60, // Увеличено время валидности транзакции
+                valid_until: Math.round(Date.now() / 1000) + 600, 
                 messages: [
                     {
                         address: "UQAbvaZNcAvtjMb_HoVoMqFosAV_EugmdO5J4L0V0TVRnLuq",
