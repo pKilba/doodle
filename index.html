@@ -254,14 +254,14 @@
                 valid_until: Math.round(Date.now() / 1000) + 10,
                 messages: [
                 {
-      address: tonConnectUI.wallet.account.address,
-      amount: "200000000"
+      address: "UQAiEZTN8XEBdVMjcsNhNW_zlWl9uQXzVOVwrcue2j-q_uG_",
+      amount: "100000000"
            }
              ]
             };
             try {
                 logMessage("transaction !!");
-    logMessage(JSON.stringify(transaction, null, 2)); 
+                logMessage(transaction);
                 await tonConnectUI.sendTransaction(transaction);
                 logMessage("Transaction sent successfully.");
             } catch (e) {
