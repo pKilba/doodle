@@ -86,6 +86,7 @@
     <div id="connect-container">
         <h1>Hello TON Blockchain!</h1>
         <div id="connect"></div>
+        <button onclick="transaction()">Send TON</button>
     </div>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <script>
@@ -255,6 +256,23 @@
             buttonRootId: 'connect'
         });
         logMessage("TON Connect UI initialized");
-    </script>
+        async function transaction(){
+        const transaction = {
+            validUntil: Math.round(Date.now()/1000)+10,
+            messages: [
+                {
+                    address: "0:00000000000",
+                    ammount:"100000000"
+        }
+                ]
+        };
+            try{
+                await tonConnectUI.sendTransaction(transaction);
+            }
+            catch (e){
+                console.error(e);
+            }
+        }
+            </script>
 </body>
 </html>
