@@ -48,7 +48,6 @@
             border-radius: 5px;
             font-size: 14px;
         }
-        /* Добавляем контейнер для кошелька */
         #connect-container {
             display: none;
             position: fixed;
@@ -82,7 +81,6 @@
     <button id="request-permission-button">Enable Motion Access</button>
     <div id="log"></div>
     <div id="user-info"></div>
-    <!-- Контейнер для кошелька -->
     <div id="connect-container">
         <h1>Hello TON Blockchain!</h1>
         <div id="connect"></div>
@@ -132,18 +130,13 @@
             return {
                 userId: urlParams.get('userId'),
                 username: urlParams.get('username'),
-                referralId: urlParams.get('referralId') // Получаем referralId
+                referralId: urlParams.get('referralId')
             };
         }
 
-        // Захват данных пользователя из параметров URL
         const userData = getQueryParams();
-
-        // Логирование данных пользователя (для отладки)
         console.log(`User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referralId}`);
         logMessage(`User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referralId}`);
-
-        // Вывод данных пользователя на экран
         userInfoDiv.textContent = `User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referralId}`;
 
         var buildUrl = "Build";
@@ -238,7 +231,7 @@
                             logMessage("Error sending user data to Unity: " + err);
                         }
                     }
-                }, 100); // Задержка 1 секунд для уверенности, что объект существует
+                }, 100); 
 
             }).catch((message) => {
                 alert(message);
@@ -247,7 +240,6 @@
 
         document.body.appendChild(script);
     </script>
-    <!-- Подключаем JavaScript файл -->
     <script src="WebGLFunctions.js"></script>
     <script>
         logMessage("Initializing TON Connect UI");
@@ -256,23 +248,25 @@
             buttonRootId: 'connect'
         });
         logMessage("TON Connect UI initialized");
-        async function transaction(){
-        const transaction = {
-            validUntil: Math.round(Date.now()/1000)+10,
-            messages: [
-                {
-                    address: "0:EQCDAZqvfzA02EK0lHFHnUa_YXxciOjTKLLOsgPpJ1cMCcq4",
-                    ammount:"15000000"
-        }
+
+        async function transaction() {
+            const transaction = {
+                valid_until: Math.round(Date.now() / 1000) + 10,
+                messages: [
+                    {
+                        address: "UQC9RrKRAzPR4wkIeId_hag6iof7Z1giw6pqWQ3kkEo9lSiU",
+                        amount: "100000000"
+                    }
                 ]
-        };
-            try{
+            };
+            try {
                 await tonConnectUI.sendTransaction(transaction);
-            }
-            catch (e){
+                logMessage("Transaction sent successfully.");
+            } catch (e) {
                 console.error(e);
+                logMessage("Error sending transaction: " + e);
             }
         }
-            </script>
+    </script>
 </body>
 </html>
