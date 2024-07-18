@@ -261,7 +261,7 @@
             };
             try {
                 logMessage("transaction !!");
-                console.log(transaction);
+    logMessage(JSON.stringify(transaction, null, 2)); 
                 await tonConnectUI.sendTransaction(transaction);
                 logMessage("Transaction sent successfully.");
             } catch (e) {
