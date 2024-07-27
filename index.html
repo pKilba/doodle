@@ -48,6 +48,12 @@
             border-radius: 5px;
             font-size: 14px;
         }
+        #user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
         #connect-container {
             display: none;
             position: fixed;
@@ -80,7 +86,10 @@
     </div>
     <button id="request-permission-button">Enable Motion Access</button>
     <div id="log"></div>
-    <div id="user-info"></div>
+    <div id="user-info">
+        <img id="user-avatar" src="" alt="User Avatar">
+        <span id="user-name"></span>
+    </div>
     <div id="connect-container">
         <h1>Hello TON Blockchain!</h1>
         <div id="connect"></div>
@@ -98,6 +107,8 @@
         var logDiv = document.getElementById("log");
         var requestPermissionButton = document.getElementById("request-permission-button");
         var userInfoDiv = document.getElementById("user-info");
+        var userAvatarImg = document.getElementById("user-avatar");
+        var userNameSpan = document.getElementById("user-name");
 
         function unityShowBanner(msg, type) {
             function updateBannerVisibility() {
@@ -130,14 +141,16 @@
             return {
                 userId: urlParams.get('userId'),
                 username: urlParams.get('username'),
-                referralId: urlParams.get('referralId')
+                referralId: urlParams.get('referralId'),
+                avatarUrl: urlParams.get('avatarUrl')
             };
         }
 
         const userData = getQueryParams();
-        console.log(`User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referralId}`);
-        logMessage(`User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referralId}`);
-        userInfoDiv.textContent = `User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referralId}`;
+        console.log(`User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referralId}, Avatar URL: ${userData.avatarUrl}`);
+               logMessage(`User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referralId}, Avatar URL: ${userData.avatarUrl}`);
+        userNameSpan.textContent = userData.username;
+        userAvatarImg.src = userData.avatarUrl;
 
         var buildUrl = "Build";
         var loaderUrl = buildUrl + "/Build.loader.js";
@@ -252,13 +265,13 @@
         async function transaction() {
             const transaction = {
                 validUntil: Math.round(Date.now() / 1000) + 600, 
-             messages: [
-  { 
-  address: 'UQCsNQPYVbwGOiB0-CcO4gikrr10fKfGUAbhGAsxyC45e5Bn',
-    amount: '100000000',
-      bounce: false
-  }
-]
+                messages: [
+                    { 
+                        address: 'UQCsNQPYVbwGOiB0-CcO4gikrr10fKfGUAbhGAsxyC45e5Bn',
+                        amount: '100000000',
+                        bounce: false
+                    }
+                ]
             };
             try {
                 logMessage("Transaction object: " + JSON.stringify(transaction));
@@ -272,3 +285,4 @@
     </script>
 </body>
 </html>
+
