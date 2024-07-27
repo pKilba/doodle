@@ -148,7 +148,7 @@
 
         const userData = getQueryParams();
         console.log(`User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referralId}, Avatar URL: ${userData.avatarUrl}`);
-               logMessage(`User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referralId}, Avatar URL: ${userData.avatarUrl}`);
+        logMessage(`User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referralId}, Avatar URL: ${userData.avatarUrl}`);
         userNameSpan.textContent = userData.username;
         userAvatarImg.src = userData.avatarUrl;
 
@@ -238,7 +238,7 @@
                 setTimeout(() => {
                     if (unityInstance && typeof unityInstance.SendMessage === "function") {
                         try {
-                            unityInstance.SendMessage('Doodler_menu', 'ReceiveUserData', JSON.stringify(userData));
+                            unityInstance.SendMessage('ReceiveTelegramData', 'ReceiveUserData', JSON.stringify(userData));
                             logMessage("User data sent to Unity.");
                         } catch (err) {
                             logMessage("Error sending user data to Unity: " + err);
@@ -285,4 +285,3 @@
     </script>
 </body>
 </html>
-
