@@ -13,11 +13,15 @@
             height: 100%;
             margin: 0;
             padding: 0;
-            background: url('TemplateData/background.png') no-repeat center center fixed; /* Замените на относительный путь к вашему изображению */
-            background-size: cover; /* Масштабируем фон */
+            background: white; /* Изначально белый фон */
             display: flex;
             justify-content: center;
             align-items: center;
+        }
+
+        body.loaded {
+            background: url('TemplateData/background.png') no-repeat center center fixed; /* Замените на относительный путь к вашему изображению */
+            background-size: cover; /* Масштабируем фон */
         }
 
         #request-permission-button {
@@ -107,7 +111,6 @@
     </div>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <script>
-        console.log("Starting script execution");
         var container = document.querySelector("#unity-container");
         var canvas = document.querySelector("#unity-canvas");
         var loadingBar = document.querySelector("#unity-loading-bar");
@@ -140,7 +143,6 @@
         }
 
         function logMessage(message) {
-            console.log("Log message: " + message);
             var logEntry = document.createElement("div");
             logEntry.textContent = message;
             logDiv.appendChild(logEntry);
@@ -158,8 +160,6 @@
         }
 
         const userData = getQueryParams();
-        console.log(`User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referralId}, Avatar URL: ${userData.avatarUrl}`);
-        logMessage(`User ID: ${userData.userId}, Username: ${userData.username}, Referrer ID: ${userData.referralId}, Avatar URL: ${userData.avatarUrl}`);
         userNameSpan.textContent = userData.username;
         userAvatarImg.src = userData.avatarUrl;
 
@@ -190,7 +190,12 @@
             qrContainer.style.display = "none"; // Скрываем QR-код для мобильных устройств
             requestPermissionButton.style.display = "block"; // Показать кнопку, если мобильное устройство
             container.style.display = "block"; // Показать Unity контейнер
+            userInfoDiv.style.display = "block"; // Показать информацию о пользователе только для мобильных устройств
+        } else {
+            userInfoDiv.style.display = "none"; // Скрываем информацию о пользователе для десктопных устройств
         }
+
+        document.body.classList.add('loaded'); // Меняем фон после загрузки
 
         loadingBar.style.display = "block";
 
@@ -212,24 +217,19 @@
 
                     function requestMotionPermission() {
                         if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-                            logMessage('Requesting iOS motion permission...');
                             DeviceMotionEvent.requestPermission()
                                 .then(permissionState => {
                                     if (permissionState === 'granted') {
-                                        logMessage('Motion permission granted.');
                                         window.addEventListener('deviceorientation', handleOrientationEvent);
                                         requestPermissionButton.style.display = 'none';
                                     } else {
-                                        logMessage('Permission to access device orientation was denied.');
                                         alert('Permission to access device orientation was denied.');
                                     }
                                 })
                                 .catch(err => {
-                                    logMessage('Error requesting motion permission:')
                                     alert('Error requesting motion permission: ' + err);
                                 });
                         } else {
-                            logMessage('DeviceMotionEvent.requestPermission is not a function, directly adding event listener.');
                             window.addEventListener('deviceorientation', handleOrientationEvent);
                             requestPermissionButton.style.display = 'none';
                         }
@@ -237,17 +237,15 @@
 
                     function handleOrientationEvent(event) {
                         var data = { x: event.gamma || 0, y: event.beta || 0 };
-                        logMessage("Sending accelerometer data: " + JSON.stringify(data));
 
                         if (unityInstance && typeof unityInstance.SendMessage === "function") {
                             try {
                                 unityInstance.SendMessage('Doodler', 'HandleAccelerometerInput', JSON.stringify(data));
-                                logMessage("Message sent to Unity.");
                             } catch (err) {
-                                logMessage("Error sending message to Unity: " + err);
+                                console.log("Error sending message to Unity: " + err);
                             }
                         } else {
-                            logMessage("Unity instance or SendMessage function not found.");
+                            console.log("Unity instance or SendMessage function not found.");
                         }
                     }
 
@@ -255,9 +253,8 @@
                         if (unityInstance && typeof unityInstance.SendMessage === "function") {
                             try {
                                 unityInstance.SendMessage('ReceiveTelegramData', 'ReceiveUserData', JSON.stringify(userData));
-                                logMessage("User data sent to Unity.");
                             } catch (err) {
-                                logMessage("Error sending user data to Unity: " + err);
+                                console.log("Error sending user data to Unity: " + err);
                             }
                         }
                     }, 2000); 
@@ -272,12 +269,10 @@
     </script>
     <script src="WebGLFunctions.js"></script>
     <script>
-        logMessage("Initializing TON Connect UI");
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://raw.githubusercontent.com/pKilba/doodle/main/tonconnect-manifest.json',
             buttonRootId: 'connect'
         });
-        logMessage("TON Connect UI initialized");
 
         async function transaction() {
             const transaction = {
@@ -291,12 +286,9 @@
                 ]
             };
             try {
-                logMessage("Transaction object: " + JSON.stringify(transaction));
                 await tonConnectUI.sendTransaction(transaction);
-                logMessage("Transaction sent successfully.");
             } catch (e) {
                 console.error("Error sending transaction:", e);
-                logMessage("Error sending transaction: " + e);
             }
         }
     </script>
