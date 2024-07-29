@@ -16,6 +16,7 @@
         }
 
         #request-permission-button {
+            display: none; /* Скрываем кнопку по умолчанию */
             position: fixed;
             bottom: 160px;
             left: 50%;
@@ -93,7 +94,7 @@
     <div id="qr-container">
         <h1>Играть на телефоне</h1>
         <p>Сканируйте QR-код для ссылки.</p>
-        <img src="https://i.ibb.co/rGP9ghR/Untitled-1.png" alt="QR-код">
+        <img src="URL_ВАШЕГО_QR_КОДА" alt="QR-код">
     </div>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <script>
@@ -177,6 +178,7 @@
             document.getElementsByTagName('head')[0].appendChild(meta);
             container.className = "unity-mobile";
             canvas.className = "unity-mobile";
+            requestPermissionButton.style.display = "block"; // Показать кнопку, если мобильное устройство
         } else {
             container.style.display = "none";
             qrContainer.style.display = "flex"; /* Для центрирования содержимого */
