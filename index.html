@@ -14,7 +14,7 @@
             margin: 0;
             padding: 0;
         }
-     
+
         #request-permission-button {
             position: fixed;
             bottom: 160px;
@@ -27,7 +27,7 @@
             border-radius: 5px;
             cursor: pointer;
         }
-     
+
         #connect-container {
             display: none;
             position: fixed;
@@ -39,6 +39,20 @@
             background-color: white;
             text-align: center;
             box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+
+        #qr-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+        }
+
+        #qr-container img {
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -69,6 +83,11 @@
         <div id="connect"></div>
         <button onclick="transaction()">Send TON</button>
     </div>
+    <div id="qr-container">
+        <h1>Играть на телефоне</h1>
+        <p>Сканируйте QR-код для ссылки.</p>
+        <img src="URL_ВАШЕГО_QR_КОДА" alt="QR-код">
+    </div>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <script>
         console.log("Starting script execution");
@@ -83,6 +102,7 @@
         var userInfoDiv = document.getElementById("user-info");
         var userAvatarImg = document.getElementById("user-avatar");
         var userNameSpan = document.getElementById("user-name");
+        var qrContainer = document.getElementById("qr-container");
 
         function unityShowBanner(msg, type) {
             function updateBannerVisibility() {
@@ -139,7 +159,11 @@
             showBanner: unityShowBanner,
         };
 
-        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        function isMobile() {
+            return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        }
+
+        if (isMobile()) {
             var meta = document.createElement('meta');
             meta.name = 'viewport';
             meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
@@ -147,85 +171,87 @@
             container.className = "unity-mobile";
             canvas.className = "unity-mobile";
         } else {
-            canvas.style.width = "960px";
-            canvas.style.height = "600px";
+            container.style.display = "none";
+            qrContainer.style.display = "block";
         }
 
         loadingBar.style.display = "block";
 
-        var script = document.createElement("script");
-        script.src = loaderUrl;
-        script.onload = () => {
-            createUnityInstance(canvas, config, (progress) => {
-                progressBarFull.style.width = 100 * progress + "%";
-            }).then((unityInstance) => {
-                loadingBar.style.display = "none";
-                fullscreenButton.onclick = () => {
-                    unityInstance.SetFullscreen(1);
-                };
+        if (isMobile()) {
+            var script = document.createElement("script");
+            script.src = loaderUrl;
+            script.onload = () => {
+                createUnityInstance(canvas, config, (progress) => {
+                    progressBarFull.style.width = 100 * progress + "%";
+                }).then((unityInstance) => {
+                    loadingBar.style.display = "none";
+                    fullscreenButton.onclick = () => {
+                        unityInstance.SetFullscreen(1);
+                    };
 
-                requestPermissionButton.onclick = () => {
-                    requestMotionPermission();
-                };
+                    requestPermissionButton.onclick = () => {
+                        requestMotionPermission();
+                    };
 
-                function requestMotionPermission() {
-                    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-                        logMessage('Requesting iOS motion permission...');
-                        DeviceMotionEvent.requestPermission()
-                            .then(permissionState => {
-                                if (permissionState === 'granted') {
-                                    logMessage('Motion permission granted.');
-                                    window.addEventListener('deviceorientation', handleOrientationEvent);
-                                    requestPermissionButton.style.display = 'none';
-                                } else {
-                                    logMessage('Permission to access device orientation was denied.');
-                                    alert('Permission to access device orientation was denied.');
-                                }
-                            })
-                            .catch(err => {
-                                logMessage('Error requesting motion permission: ' + err);
-                                alert('Error requesting motion permission: ' + err);
-                            });
-                    } else {
-                        logMessage('DeviceMotionEvent.requestPermission is not a function, directly adding event listener.');
-                        window.addEventListener('deviceorientation', handleOrientationEvent);
-                        requestPermissionButton.style.display = 'none';
-                    }
-                }
-
-                function handleOrientationEvent(event) {
-                    var data = { x: event.gamma || 0, y: event.beta || 0 };
-                    logMessage("Sending accelerometer data: " + JSON.stringify(data));
-
-                    if (unityInstance && typeof unityInstance.SendMessage === "function") {
-                        try {
-                            unityInstance.SendMessage('Doodler', 'HandleAccelerometerInput', JSON.stringify(data));
-                            logMessage("Message sent to Unity.");
-                        } catch (err) {
-                            logMessage("Error sending message to Unity: " + err);
-                        }
-                    } else {
-                        logMessage("Unity instance or SendMessage function not found.");
-                    }
-                }
-
-                setTimeout(() => {
-                    if (unityInstance && typeof unityInstance.SendMessage === "function") {
-                        try {
-                            unityInstance.SendMessage('ReceiveTelegramData', 'ReceiveUserData', JSON.stringify(userData));
-                            logMessage("User data sent to Unity.");
-                        } catch (err) {
-                            logMessage("Error sending user data to Unity: " + err);
+                    function requestMotionPermission() {
+                        if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+                            logMessage('Requesting iOS motion permission...');
+                            DeviceMotionEvent.requestPermission()
+                                .then(permissionState => {
+                                    if (permissionState === 'granted') {
+                                        logMessage('Motion permission granted.');
+                                        window.addEventListener('deviceorientation', handleOrientationEvent);
+                                        requestPermissionButton.style.display = 'none';
+                                    } else {
+                                        logMessage('Permission to access device orientation was denied.');
+                                        alert('Permission to access device orientation was denied.');
+                                    }
+                                })
+                                .catch(err => {
+                                    logMessage('Error requesting motion permission: ' + err);
+                                    alert('Error requesting motion permission: ' + err);
+                                });
+                        } else {
+                            logMessage('DeviceMotionEvent.requestPermission is not a function, directly adding event listener.');
+                            window.addEventListener('deviceorientation', handleOrientationEvent);
+                            requestPermissionButton.style.display = 'none';
                         }
                     }
-                }, 2000); 
 
-            }).catch((message) => {
-                alert(message);
-            });
-        };
+                    function handleOrientationEvent(event) {
+                        var data = { x: event.gamma || 0, y: event.beta || 0 };
+                        logMessage("Sending accelerometer data: " + JSON.stringify(data));
 
-        document.body.appendChild(script);
+                        if (unityInstance && typeof unityInstance.SendMessage === "function") {
+                            try {
+                                unityInstance.SendMessage('Doodler', 'HandleAccelerometerInput', JSON.stringify(data));
+                                logMessage("Message sent to Unity.");
+                            } catch (err) {
+                                logMessage("Error sending message to Unity: " + err);
+                            }
+                        } else {
+                            logMessage("Unity instance or SendMessage function not found.");
+                        }
+                    }
+
+                    setTimeout(() => {
+                        if (unityInstance && typeof unityInstance.SendMessage === "function") {
+                            try {
+                                unityInstance.SendMessage('ReceiveTelegramData', 'ReceiveUserData', JSON.stringify(userData));
+                                logMessage("User data sent to Unity.");
+                            } catch (err) {
+                                logMessage("Error sending user data to Unity: " + err);
+                            }
+                        }
+                    }, 2000); 
+
+                }).catch((message) => {
+                    alert(message);
+                });
+            };
+
+            document.body.appendChild(script);
+        }
     </script>
     <script src="WebGLFunctions.js"></script>
     <script>
