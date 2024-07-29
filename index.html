@@ -13,7 +13,8 @@
             height: 100%;
             margin: 0;
             padding: 0;
-            background-color: #007bff; /* Устанавливаем синий фон по умолчанию */
+            background: url('path/to/your/background-image.jpg') no-repeat center center fixed; /* Замените на относительный путь к вашему изображению */
+            background-size: cover; /* Масштабируем фон */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -53,7 +54,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #007bff; /* Синий фон */
+            background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный черный фон для видимости текста на фоне */
             color: white;
             text-align: center;
             justify-content: center;
@@ -102,7 +103,7 @@
     <div id="qr-container">
         <h1>Играть на телефоне</h1>
         <p>Сканируйте QR-код для ссылки.</p>
-        <img src="https://i.ibb.co/rGP9ghR/Untitled-1.png" alt="QR-код">
+        <img src="URL_ВАШЕГО_QR_КОДА" alt="QR-код">
     </div>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <script>
@@ -224,7 +225,8 @@
                                     }
                                 })
                                 .catch(err => {
-                                    logMessage('Error');
+                                    logMessage('Error requesting motion permission: '```html
++ err);
                                     alert('Error requesting motion permission: ' + err);
                                 });
                         } else {
