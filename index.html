@@ -13,6 +13,10 @@
             height: 100%;
             margin: 0;
             padding: 0;
+            background-color: #007bff; /* Устанавливаем синий фон по умолчанию */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         #request-permission-button {
@@ -43,7 +47,7 @@
         }
 
         #qr-container {
-            display: none;
+            display: flex; /* Отображаем сразу */
             position: fixed;
             top: 0;
             left: 0;
@@ -61,6 +65,10 @@
             margin-top: 20px;
             width: 200px; /* Уменьшение размера изображения */
             height: auto;
+        }
+
+        #unity-container {
+            display: none; /* Скрываем Unity по умолчанию */
         }
     </style>
 </head>
@@ -178,10 +186,9 @@
             document.getElementsByTagName('head')[0].appendChild(meta);
             container.className = "unity-mobile";
             canvas.className = "unity-mobile";
+            qrContainer.style.display = "none"; // Скрываем QR-код для мобильных устройств
             requestPermissionButton.style.display = "block"; // Показать кнопку, если мобильное устройство
-        } else {
-            container.style.display = "none";
-            qrContainer.style.display = "flex"; /* Для центрирования содержимого */
+            container.style.display = "block"; // Показать Unity контейнер
         }
 
         loadingBar.style.display = "block";
@@ -217,7 +224,7 @@
                                     }
                                 })
                                 .catch(err => {
-                                    logMessage('Error requesting motion permission: ' + err);
+                                    logMessage('Error');
                                     alert('Error requesting motion permission: ' + err);
                                 });
                         } else {
